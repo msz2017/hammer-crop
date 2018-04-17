@@ -1,0 +1,8 @@
+{
+  "name": "hammer-crop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/msz2017/hammer-crop.git",
+  "author": "shuz <15558057209@163.com>",
+  "license": "MIT"
+}
