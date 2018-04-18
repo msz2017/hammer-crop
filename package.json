@@ -4,5 +4,21 @@
   "main": "index.js",
   "repository": "https://github.com/msz2017/hammer-crop.git",
   "author": "shuz <15558057209@163.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.js -o hammer-crop.min.js"
+  },
+  "dependencies": {
+    "assemble": "~0.3.11",
+    "babel-preset-env": "^1.6.1",
+    "grunt": "~0.4.0",
+    "hammerjs": "^2.0.8",
+    "styles": "^0.2.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "node-sass": "^4.8.3"
+  }
 }
