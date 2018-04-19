@@ -1,7 +1,7 @@
 import Hammer from 'hammerjs';
 import 'styles/style.scss';
 // import base from 'styles/base.css'
-// import s from 'hammer-crop'
+import imageSrc from 'images/file.png';
 
 const DIRECTION_NONE = 1;
 const DIRECTION_LEFT = 2;
@@ -14,9 +14,75 @@ const DIRECTION_ALL = 30;
 
 const threshold = 300;
 
+const css = (el, obj) => {
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            el.style[key] = obj[key];
+        }
+    }
+}
 
-const element = document.querySelector('.hammer');
-// const img = element.querySelector('.hammer');
+const image = new Image();
+
+image.src = imageSrc;
+
+const element = document.createElement('div');
+
+element.appendChild(image);
+
+document.body.appendChild(element);
+
+const {
+    clientHeight,
+    clientWidth
+} = document.documentElement;
+
+const devicePixelRatio = window.devicePixelRatio || 1;
+
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+
+const backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
+    ctx.mozBackingStorePixelRatio ||
+    ctx.msBackingStorePixelRatio ||
+    ctx.oBackingStorePixelRatio ||
+    ctx.backingStorePixelRatio || 1;
+
+const ratio = devicePixelRatio / backingStoreRatio;
+
+const radius = clientWidth * ratio / 2 * .8;
+
+canvas.width = clientWidth * ratio;
+canvas.height = clientHeight * ratio;
+canvas.style.width = `${clientWidth}px`;
+canvas.style.height = `${clientHeight}px`;
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 1 * ratio;
+ctx.fillStyle = 'rgba(0,0,0,.5)';
+ctx.fillRect(0, 0, clientWidth * ratio, clientHeight * ratio);
+
+ctx.beginPath();
+ctx.arc(clientWidth * ratio / 2, clientHeight * ratio / 2, radius, 0, 2 * Math.PI);
+ctx.stroke();
+ctx.clip();
+ctx.globalAlpha = 0;
+ctx.globalCompositeOperation = 'source-in'
+ctx.fill();
+
+const canvasContainer = document.createElement('div');
+canvasContainer.id = 'canvasContainer';
+css(canvasContainer, {
+    position: 'fixed',
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    'pointer-events': 'none',
+})
+
+canvasContainer.appendChild(canvas);
+
+document.body.appendChild(canvasContainer);
 
 const hammer = new Hammer(element);
 hammer.get('pinch').set({
@@ -68,11 +134,20 @@ hammer.on('panend', (evt) => {
 
 hammer.on('pinchstart', (evt) => {
     enablePan = false;
-    console.log('scale');
+    console.log('pinchstart');
     console.log(evt)
+});
+
+hammer.on('pinchmove', (evt) => {
+    console.log('pinchmove');
+    console.log(evt);
+    element.style.transform = `translate3d(${deltaX}px,${deltaY}px,0) rotate(${rotation}) scale(${scale*evt.scale})`;
 });
 
 hammer.on('pinchend', (evt) => {
     console.log('pinchend');
     lastPinchTime = Date.now();
+    scale *= evt.scale;
+    console.log(evt);
+    element.style.transform = `translate3d(${deltaX}px,${deltaY}px,0) rotate(${rotation}) scale(${scale})`;
 });
